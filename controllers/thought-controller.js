@@ -12,22 +12,25 @@ module.exports = {
         }
     },
 
-    async getThoughtById(req, res) {
+    async getThoughtById({params}, res) {
         try {
+            console.log(params);
             const thought = await Thought.findOne({
-                _id: req.params.thoughtId
-            }).populate("thoughts").populate("reactions");
+                _id: params.id
+            }).populate("reactions");
             res.json(thought);
         } catch (err) {
-            res.status(500).json(err);
+            res.status(500).json(err); console.error(err);
         }
     },
 
     async updateThought(req, res) {
-        try {
-            const thought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, {
+        try { console.log(req);
+            const thought = await Thought.findByIdAndUpdate(req.params.id, req.body, {
                 new: true,
             });
+            console.log(thought);
+
             if (!thought) {
                 res.status(404).json({
                     message: "Thought not found"
@@ -40,18 +43,16 @@ module.exports = {
         }
     },
 
-    async addReaction(req, res) {
-        try {
-            const thought = await Thought.findOneAndUpdate({
-                _id: req.params.thoughtId
-            }, {
-                $addToSet: {
-                    reactions: req.body
-                }
-            }, {
-                runValidators: true,
-                new: true
-            });
+    async addReaction(req, res) { 
+        console.log(req.body); console.log(req.params.thoughtId);
+        try { console.log("hello");
+            const thought = await Thought.findOne(
+                // {_id: req.params.thoughtId},
+                // {$addToSet: {reactions: req.body} }, 
+                // {runValidators: true,new: true}
+                ); 
+                // console.log(reactions.reactionId);
+                console.log(thought);
             thought ? res.json(thought) : res.status(404).json({
                 message: notFound
             });
